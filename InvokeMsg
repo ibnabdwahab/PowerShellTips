@@ -1,0 +1,1 @@
+Invoke-WmiMethod -Path Win32_Process -Name Create -ArgumentList "msg * This is a message from corporate IT unit. Updates have been installed, please restart your computer."
