@@ -1,0 +1,51 @@
+﻿Function Add($num1, $num2)
+    {"$num1 plus $num2 is $($num1+$num2)"}
+Function Subtract($num1, $num2)
+    {"$num1 minus $num2 is  $($num1 - $num2)"}
+Function Multiply($num1, $num2)
+    {"$num1 times $num2 is " + $num1*$num2}
+Function Divide($num1, $num2)
+    {"$num1 divided by $num2 is " + $num1/$num2}
+Function MODULUS($num1, $num2)
+    {"$num1 modulus $num2 is "  + $num1 % $num2}
+Function Exponent($num1, $num2)
+    {"$num1 raised to the power of $num2 is " + ([math]::pow($num1, $num2))}
+
+Function Show-Menu
+{param([String]$title="****CALCULATOR****`nCHOOSE THE CALCULATION")
+
+[int]$num1=read-host "Choose first number"
+[int]$num2=read-host "Choose second number"
+
+Write-Host $title
+Write-Host "1 = ADD"
+Write-Host "2 = SUBTRACT"
+Write-Host "3 = MULTIPLY"
+Write-Host "4 = DIVIDE"
+Write-Host "5 = EXPONENT"
+Write-Host "6 = MODULUS"
+Write-Host "q = QUIT"
+
+return $num1, $num2
+}
+
+do{
+    $num1, $num2 = show-menu
+    $input=read-host "Select"
+    switch($input){
+        '1'{
+            ADD $num1 $num2
+        }'2'{
+            SUBTRACT $num1 $num2
+        }'3'{
+            MULTIPLY $num1 $num2
+        }'4'{
+            DIVIDE $num1 $num2
+        }'5'{
+            EXPONENT $num1 $num2
+        }'6'{
+            MODULUS $num1 $num2
+        }'q'{
+            return}
+    } Pause
+} Until($input-eq'q')
