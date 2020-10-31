@@ -1,0 +1,63 @@
+=======================================================================
+
+Basic PowerShell Remoting 
+
+=======================================================================
+
+
+#Enable PowerShell Remoting on the PC You Want to Access Remotely.
+#Lunch PoweShell as an Admin
+Enable-PSRemoting -Force
+
+#verify that WinRM is setup and configured locally
+Test-WSMan
+
+# basic WinRM configuration with default settings
+winrm quickconfig
+
+
+# check winrm settings
+winrm get winrm/config/client
+winrm get winrm/config/service
+
+winrm enumerate winrm/config/listener
+
+
+#Machine for Lab
+$env:COMPUTERNAME
+$env:USERDOMAIN
+
+#verify remote machine is reachable on the network
+#verify that WinRM is setup and responding on a remote device
+#you must specify the authentication type when testing a remote device.
+#if you are unsure about the authentication, set it to Negotiate
+
+$credential = Get-Credential
+Test-WSMan serv2012 -Authentication Negotiate -Credential $credential
+
+#verify local device is listening on WinRM port
+Get-NetTCPConnection -LocalPort 5985
+
+#verify a remote device is listening on WinRM port
+Test-NetConnection -Computername Serv2012 -Port 5985
+
+#establish an interactive remote session
+$credential = Get-Credential
+Enter-PSSession -ComputerName Serv2012 -Credential $credential
+
+#To run PS remoting on HTTPS
+#Creat SSLcertificate and get the certificate thumprint
+New-SelfSignedCertificate -DnsName server01 -CertStoreLocation Cert:\LocalMachine\My
+
+#Run the command below on cmd previledge level
+winrm create winrm/config/Listener?Address=*+Transport=HTTPS @{Hostname="server01"; CertificateThumbprint="830D532E162346A6AAAF1275C856D23608A9F1A8"}
+
+#Verify WinRM is Ok on HTTPS
+WinRM e winrm/config/listener
+
+#establish an interactive remote sessio
+Enter-PSSession -ComputerName Serv2012 -Credential $credential -UseSSL
+
+#session opened to device over SSL
+$credential = Get-Credential
+$sessionHTTPS = New-PSSession -ComputerName Serv2012 -Credential $credential -UseSSL
