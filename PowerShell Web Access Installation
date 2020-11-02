@@ -1,0 +1,36 @@
+
+
+#Ref: https://docs.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-R2-and-2012/hh831611(v=ws.11)
+
+#Check Status before installation
+Get-Windowsfeature WindowsPowerShellWebAccess
+
+#Install PowerShell Web Access
+Install-WindowsFeature –Name WindowsPowerShellWebAccess -ComputerName Server01 -IncludeManagementTools -Restart
+
+
+#Confirm status again
+Get-Windowsfeature WindowsPowerShellWebAccess
+
+
+#This commands installed the following windows role and features
+Get-Windowsfeature -Name web-* | where-object {$_.Installed -eq $True}
+
+
+#Configure The Gateway Application with Genuine Certificate
+Install-PswaWebApplication -WebApplicationName webaccess
+
+
+#Configure The Gateway Application with  Test Certificate
+Install-PswaWebApplication -WebApplicationName webaccess -UseTestCertificate
+
+#Then go to IIS to bind your CA certtificate
+
+#Configure an Authorization Rule
+Add-PswaAuthorizationRule –UserName ilynks\appserv -ComputerName Server01 -ConfigurationName Microsoft.PowerShell
+
+
+#Verify authorization rule
+Test-PswaAuthorizationRule -UserName ilynks\appserv -ComputerName Server01.ilynks.com
+
+#Open your web browser and type https://serveraddress/WebApplicationName  i.e https://<server_IP>/pswebaccess
